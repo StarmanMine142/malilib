@@ -80,6 +80,12 @@ public class InventoryOverlay
         Identifier.ofVanilla("item/empty_armor_slot_leggings"),
         Identifier.ofVanilla("item/empty_armor_slot_chestplate"),
         Identifier.ofVanilla("item/empty_armor_slot_helmet")
+/*
+        Identifier.ofVanilla("container/slot/boots"),
+        Identifier.ofVanilla("container/slot/leggings"),
+        Identifier.ofVanilla("container/slot/chestplate"),
+        Identifier.ofVanilla("container/slot/helmet")
+ */
     };
 
     private static ItemStack hoveredStack = null;
@@ -440,7 +446,7 @@ public class InventoryOverlay
         {
             Block block = ((BlockItem) item).getBlock();
 
-            if (block instanceof ShulkerBoxBlock || block instanceof ChestBlock)
+            if (block instanceof ShulkerBoxBlock || block instanceof ChestBlock || block instanceof BarrelBlock)
             {
                 return InventoryRenderType.FIXED_27;
             }
@@ -497,6 +503,7 @@ public class InventoryOverlay
         if (blockType != null)
         {
             if (blockType.equals(BlockEntityType.SHULKER_BOX) ||
+                blockType.equals(BlockEntityType.BARREL) ||
                 blockType.equals(BlockEntityType.CHEST) ||
                 blockType.equals(BlockEntityType.TRAPPED_CHEST))
             {
