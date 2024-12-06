@@ -12,7 +12,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -20,7 +19,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.profiler.Profilers;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -129,13 +127,13 @@ public class GameWrap
         }
         else
         {
-            if (getClient().getNetworkHandler() != null)
+            if (getClientWorld() != null)
             {
-                return new GameRules(getClient().getNetworkHandler().getEnabledFeatures());
+                return getClientWorld().getGameRules();
             }
         }
 
-        return new GameRules(FeatureSet.empty());
+        return new GameRules();
     }
 
     public static void printToChat(String msg)
@@ -254,33 +252,38 @@ public class GameWrap
         }
         else
         {
-            mc.createTask(task);
+            mc.executeTask(task);
         }
     }
 
     public static void profilerPush(String name)
     {
-        Profilers.get().push(name);
+        //Profilers.get().push(name);
+        getClient().getProfiler().push(name);
     }
 
     public static void profilerPush(Supplier<String> nameSupplier)
     {
-        Profilers.get().push(nameSupplier);
+        //Profilers.get().push(nameSupplier);
+        getClient().getProfiler().push(nameSupplier);
     }
 
     public static void profilerSwap(String name)
     {
-        Profilers.get().swap(name);
+        //Profilers.get().swap(name);
+        getClient().getProfiler().swap(name);
     }
 
     public static void profilerSwap(Supplier<String> nameSupplier)
     {
-        Profilers.get().swap(nameSupplier);
+        //Profilers.get().swap(nameSupplier);
+        getClient().getProfiler().swap(nameSupplier);
     }
 
     public static void profilerPop()
     {
-        Profilers.get().pop();
+        //Profilers.get().pop();
+        getClient().getProfiler().pop();
     }
 
     public static void openFile(Path file)

@@ -25,7 +25,7 @@ public class ItemWrap
     @Nullable
     public static NbtCompound getTag(ItemStack stack, @Nonnull DynamicRegistryManager registry)
     {
-        return (NbtCompound) stack.toNbt(registry);
+        return (NbtCompound) stack.encode(registry);
     }
 
     public static void setTag(ItemStack stack, @Nullable NbtCompound tag, @Nonnull DynamicRegistryManager registry)
