@@ -12,6 +12,8 @@ import net.minecraft.block.entity.CrafterBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Fog;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -28,6 +30,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.profiler.Profiler;
 
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -58,29 +61,20 @@ public class TestRenderHandler implements IRenderer
     }
 
     @Override
-    public void onRenderWorldLast(Matrix4f posMatrix, Matrix4f projMatrix)
-    // TODO 1.21.3+
-    //public void onRenderWorldLastAdvanced(Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, Profiler profiler)
+    public void onRenderWorldLastAdvanced(Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, Profiler profiler)
     {
         MinecraftClient mc = MinecraftClient.getInstance();
-        // TODO 1.21-
-        Profiler profiler = mc.getProfiler();
 
         if (mc.player != null)
         {
             profiler.push(this.getProfilerSectionSupplier() + "_render_targeting_overlay");
             this.renderTargetingOverlay(posMatrix, mc);
             profiler.pop();
-
-            // TODO 1.21-
-            this.onRenderWorldTestWalls(posMatrix, projMatrix, mc.gameRenderer.getCamera(), profiler);
         }
     }
 
-    //@Override
-    // TODO 1.21.3+
-    //public void onRenderWorldPreWeather(Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, Profiler profiler)
-    public void onRenderWorldTestWalls(Matrix4f posMatrix, Matrix4f projMatrix, Camera camera, Profiler profiler)
+    @Override
+    public void onRenderWorldPreWeather(Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, Profiler profiler)
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
@@ -117,9 +111,7 @@ public class TestRenderHandler implements IRenderer
         {
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
-                // TODO 1.21.3+
-                //RenderUtils.renderMapPreview(stack, x, y, 160, false, drawContext);
-                RenderUtils.renderMapPreview(stack, x, y, 160, false);
+                RenderUtils.renderMapPreview(stack, x, y, 160, false, drawContext);
             }
         }
         else if (stack.getComponents().contains(DataComponentTypes.CONTAINER) && InventoryUtils.shulkerBoxHasItems(stack))
@@ -399,6 +391,9 @@ public class TestRenderHandler implements IRenderer
         int x = xCenter - 52 / 2;
         int y = yCenter - 92;
 
+        MaLiLib.logger.error("0: -> inv.type [{}] // nbt.type [{}]", context.inv() != null ? InventoryOverlay.getInventoryType(context.inv()) : null, context.nbt() != null ? InventoryOverlay.getInventoryType(context.nbt()) : null);
+        MaLiLib.logger.error("1: -> inv.size [{}] // inv.isEmpty [{}]", context.inv() != null ? context.inv().size() : -1, context.inv() != null ? context.inv().isEmpty() : -1);
+
         if (inv != null && inv.size() > 0)
         {
             final boolean isHorse = (entityLivingBase instanceof AbstractHorseEntity);
@@ -437,12 +432,12 @@ public class TestRenderHandler implements IRenderer
                 }
             }
 
-            //MaLiLib.logger.warn("renderInventoryOverlay: type [{}] // Nbt Type [{}]", type.toString(), context.nbt() != null ? InventoryOverlay.getInventoryType(context.nbt()) : "INVALID");
-
             if (context.be() != null && context.be().getCachedState().getBlock() instanceof ShulkerBoxBlock sbb)
             {
                 RenderUtils.setShulkerboxBackgroundTintColor(sbb, true);
             }
+
+            MaLiLib.logger.warn("render():0: type [{}] // Nbt Type [{}]", type.toString(), context.nbt() != null ? InventoryOverlay.getInventoryType(context.nbt()) : "INVALID");
 
             if (isHorse)
             {
@@ -452,8 +447,6 @@ public class TestRenderHandler implements IRenderer
                 horseInv.setStack(1, inv.getStack(0));
 
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, 2, mc);
-                // TODO 1.21.3+
-                /*
                 if (type == InventoryOverlay.InventoryRenderType.LLAMA)
                 {
                     InventoryOverlay.renderLlamaArmorBackgroundSlots(horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
@@ -462,7 +455,6 @@ public class TestRenderHandler implements IRenderer
                 {
                     InventoryOverlay.renderHorseArmorBackgroundSlots(horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
                 }
-                 */
                 InventoryOverlay.renderInventoryStacks(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc, drawContext);
                 xInv += 32 + 4;
             }
@@ -470,7 +462,7 @@ public class TestRenderHandler implements IRenderer
             if (totalSlots > 0)
             {
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, totalSlots, mc);
-                // TODO 1.21.3+
+                // TODO 1.21.4+
                 /*
                 if (type == InventoryOverlay.InventoryRenderType.BREWING_STAND)
                 {
@@ -503,8 +495,7 @@ public class TestRenderHandler implements IRenderer
             ItemStack wolfArmor = ((WolfEntity) entityLivingBase).getBodyArmor();
             wolfInv.setStack(0, wolfArmor != null && !wolfArmor.isEmpty() ? wolfArmor : ItemStack.EMPTY);
             InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, 2, mc);
-            // TODO 1.21.3+
-            //InventoryOverlay.renderWolfArmorBackgroundSlots(wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
+            InventoryOverlay.renderWolfArmorBackgroundSlots(wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
             InventoryOverlay.renderInventoryStacks(type, wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc, drawContext);
         }
 
