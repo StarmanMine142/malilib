@@ -243,14 +243,16 @@ public class InventoryOverlay
         RenderUtils.drawTexturedRectBatched(x +   7, y +   7,   7,  17, 162, 108, buffer); // middle
     }
 
-    // TODO FOR 1.21.2 +
-    private static void renderInventoryBackgroundSlots(InventoryRenderType type, Inventory inv, int x, int y, DrawContext drawContext)
+    public static void renderInventoryBackgroundSlots(InventoryRenderType type, Inventory inv, int x, int y, DrawContext drawContext)
     {
+        /*
         if (type == InventoryRenderType.BREWING_STAND)
         {
             renderBrewerBackgroundSlots(inv, x, y, drawContext);
         }
-        else if (type == InventoryRenderType.HORSE)
+        else
+         */
+        if (type == InventoryRenderType.HORSE)
         {
             renderHorseArmorBackgroundSlots(inv, x, y, drawContext);
         }
@@ -264,6 +266,7 @@ public class InventoryOverlay
         }
     }
 
+    // TODO 1.21.4+
     private static void renderBrewerBackgroundSlots(Inventory inv, int x, int y, DrawContext drawContext)
     {
         renderBrewerBackgroundSlots(inv, x, y, 0.9f, drawContext, 0, 0);
@@ -294,7 +297,7 @@ public class InventoryOverlay
         renderHorseArmorBackgroundSlots(inv, x, y, 0.9f, drawContext, 0, 0);
     }
 
-    private static void renderHorseArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
+    public static void renderHorseArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
     {
         if (inv.getStack(0).isEmpty())
         {
@@ -312,7 +315,7 @@ public class InventoryOverlay
         renderLlamaArmorBackgroundSlots(inv, x, y, 0.9f, drawContext, 0, 0);
     }
 
-    private static void renderLlamaArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
+    public static void renderLlamaArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
     {
         if (inv.getStack(0).isEmpty())
         {
@@ -325,7 +328,7 @@ public class InventoryOverlay
         renderWolfArmorBackgroundSlots(inv, x, y, 0.9f, drawContext, 0, 0);
     }
 
-    private static void renderWolfArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
+    public static void renderWolfArmorBackgroundSlots(Inventory inv, int x, int y, float scale, DrawContext drawContext, double mouseX, double mouseY)
     {
         if (inv.getStack(0).isEmpty())
         {
