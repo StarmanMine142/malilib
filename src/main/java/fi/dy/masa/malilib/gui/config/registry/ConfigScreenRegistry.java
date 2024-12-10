@@ -7,15 +7,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
-import fi.dy.masa.malilib.gui.GuiBase;
-import org.jetbrains.annotations.ApiStatus;
 
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.data.ModInfo;
 
 /**
  * Post-ReWrite code
  */
-@ApiStatus.Experimental
 public class ConfigScreenRegistry
 {
     protected final Map<String, ModInfo> modsMap = new HashMap<>();
