@@ -1,15 +1,11 @@
 package fi.dy.masa.malilib.registry;
 
 import fi.dy.masa.malilib.gui.config.registry.ConfigScreenRegistry;
-import org.jetbrains.annotations.ApiStatus;
-
-import fi.dy.masa.malilib.gui.config.registry.ConfigScreenRegistry;
 import fi.dy.masa.malilib.interoperation.BlockPlacementPositionHandler;
 
 /**
  * Post-ReWrite code
  */
-@ApiStatus.Experimental
 public class Registry
 {
     // Registries
