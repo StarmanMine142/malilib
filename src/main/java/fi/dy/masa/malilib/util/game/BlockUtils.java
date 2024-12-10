@@ -205,7 +205,7 @@ public class BlockUtils
      */
     public static Optional<Direction> getFirstPropertyFacingValue(BlockState state)
     {
-        Optional<EnumProperty<Direction>> propOptional = getFirstDirectionProperty(state);
+        Optional<DirectionProperty> propOptional = getFirstDirectionProperty(state);
         return propOptional.map(directionProperty -> Direction.byId(state.get(directionProperty).getId()));
     }
 
@@ -213,14 +213,13 @@ public class BlockUtils
      * Returns the first PropertyDirection property from the provided state, if any.
      * @return the first PropertyDirection, or empty() if there are no such properties
      */
-    @SuppressWarnings("unchecked")
-    public static Optional<EnumProperty<Direction>> getFirstDirectionProperty(BlockState state)
+    public static Optional<DirectionProperty> getFirstDirectionProperty(BlockState state)
     {
         for (Property<?> prop : state.getProperties())
         {
-            if (prop instanceof EnumProperty<?> ep && ep.getType().equals(Direction.class))
+            if (prop instanceof DirectionProperty)
             {
-                return Optional.of((EnumProperty<Direction>) ep);
+                return Optional.of((DirectionProperty) prop);
             }
         }
 
@@ -250,7 +249,7 @@ public class BlockUtils
                     if (prop instanceof BooleanProperty)
                     {
                         key = val.equals(Boolean.TRUE) ? "malilib.label.block_state_properties.boolean.true" :
-                              "malilib.label.block_state_properties.boolean.false";
+                                                         "malilib.label.block_state_properties.boolean.false";
                     }
                     else if (prop instanceof DirectionProperty)
                     {
@@ -258,14 +257,16 @@ public class BlockUtils
                     }
                     else if (prop instanceof EnumProperty<?> enumProperty)
                     {
-                        if (enumProperty.getType().equals(Direction.class))
-                        {
-                            key = "malilib.label.block_state_properties.direction";
-                        }
-                        else if (enumProperty.getType().equals(Orientation.class))
+                        if (enumProperty.getType().equals(Orientation.class))
                         {
                             key = "malilib.label.block_state_properties.orientation";
                         }
+                        /*
+                        else if (enumProperty.getType().equals(Direction.class))
+                        {
+                            key = "malilib.label.block_state_properties.direction";
+                        }
+                         */
                         else
                         {
                             key = "malilib.label.block_state_properties.enum";
@@ -401,20 +402,12 @@ public class BlockUtils
             Block block = ((BlockItem) item).getBlock();
             BlockState state = block.getDefaultState();
 
-            if (state.contains(Properties.FACING))
+            for (Property<?> prop : state.getProperties())
             {
-                return true;
-            }
-            else if (state.contains(Properties.HOPPER_FACING) &&
-                    facing.equals(Direction.UP) == false)
-            {
-                return true;
-            }
-            else if (state.contains(Properties.HORIZONTAL_FACING) &&
-                    facing.equals(Direction.UP) == false &&
-                    facing.equals(Direction.DOWN) == false)
-            {
-                return true;
+                if (prop instanceof DirectionProperty)
+                {
+                    return ((DirectionProperty) prop).getValues().contains(facing);
+                }
             }
         }
 
