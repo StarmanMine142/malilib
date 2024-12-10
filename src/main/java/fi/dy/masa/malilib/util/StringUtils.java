@@ -32,6 +32,9 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 
+/**
+ * File has been merged with Post-Rewrite StringUtils
+ */
 public class StringUtils
 {
     @Nullable
@@ -172,7 +175,7 @@ public class StringUtils
             .formatted(net.minecraft.util.Formatting.UNDERLINE)
             .styled((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
 
-        sender.sendMessage(Text.translatable(messageKey, name));
+        sender.sendMessage(Text.translatable(messageKey, name), false);
     }
 
     public static int getMaxStringRenderWidth(String... strings)
@@ -216,7 +219,7 @@ public class StringUtils
 
     public static void addTranslatedLines(List<String> linesOut, String translationKey)
     {
-        String[] parts = translate(translationKey).split("\\\\n");
+        String[] parts = translate(translationKey).split("\\\\n|\\n");
         Collections.addAll(linesOut, parts);
     }
 
@@ -693,14 +696,14 @@ public class StringUtils
     public static List<String> translateAndLineSplit(String translationKey, Object... args)
     {
         String translated = translate(translationKey, args);
-        return Arrays.asList(translated.split("\\n"));
+        return Arrays.asList(translated.split("\\\\n|\\n"));
     }
 
     public static void translateAndLineSplit(Consumer<String> lineConsumer, String translationKey, Object... args)
     {
         String translated = translate(translationKey, args);
 
-        for (String line : translated.split("\\n"))
+        for (String line : translated.split("\\\\n|\\n"))
         {
             lineConsumer.accept(line);
         }
@@ -793,17 +796,17 @@ public class StringUtils
      */
     public static int getFontHeight()
     {
-        return net.minecraft.client.MinecraftClient.getInstance().textRenderer.fontHeight;
+        return MinecraftClient.getInstance().textRenderer.fontHeight;
     }
 
     public static int getStringWidth(String text)
     {
-        return net.minecraft.client.MinecraftClient.getInstance().textRenderer.getWidth(text);
+        return MinecraftClient.getInstance().textRenderer.getWidth(text);
     }
 
     public static void drawString(int x, int y, int color, String text, DrawContext drawContext)
     {
-        drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
+        drawContext.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
         //RenderUtils.forceDraw(drawContext);
     }
 

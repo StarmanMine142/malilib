@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.gui.registry;
+package fi.dy.masa.malilib.gui.config.registry;
 
 import java.util.ArrayList;
 import java.util.Comparator;

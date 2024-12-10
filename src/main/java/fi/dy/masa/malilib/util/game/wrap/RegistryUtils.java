@@ -82,7 +82,7 @@ public class RegistryUtils
     {
         try
         {
-            return registry.getOrThrow(Registries.BLOCK.getKey()).getEntry(id).orElseThrow();
+            return registry.get(Registries.BLOCK.getKey()).getEntry(id).orElseThrow();
         }
         catch (Exception e)
         {
@@ -101,7 +101,7 @@ public class RegistryUtils
     {
         try
         {
-            return registry.getOrThrow(Registries.BLOCK_ENTITY_TYPE.getKey()).getEntry(id).orElse(null);
+            return registry.get(Registries.BLOCK_ENTITY_TYPE.getKey()).getEntry(id).orElse(null);
         }
         catch (Exception e)
         {
@@ -120,7 +120,7 @@ public class RegistryUtils
     {
         try
         {
-            return registry.getOrThrow(Registries.ENTITY_TYPE.getKey()).getEntry(id).orElse(null);
+            return registry.get(Registries.ENTITY_TYPE.getKey()).getEntry(id).orElse(null);
         }
             catch (Exception e)
         {

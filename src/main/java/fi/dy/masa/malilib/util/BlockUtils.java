@@ -4,14 +4,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.CrafterBlockEntity;
@@ -19,7 +16,6 @@ import net.minecraft.block.entity.SignText;
 import net.minecraft.block.enums.Orientation;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,8 +24,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.state.property.*;
 import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -43,54 +39,6 @@ import fi.dy.masa.malilib.gui.GuiBase;
  */
 public class BlockUtils
 {
-    /**
-     * Returns the Direction value of the first found PropertyDirection
-     * type block state property in the given state, if any.
-     * If there are no PropertyDirection properties, then empty() is returned.
-     */
-    @ApiStatus.Experimental
-    public static Optional<Direction> PRW_getFirstPropertyFacingValue(BlockState state)
-    {
-        Optional<EnumProperty<Direction>> propOptional = PRW_getFirstDirectionProperty(state);
-        return propOptional.map(directionProperty -> Direction.byId(state.get(directionProperty).getId()));
-    }
-
-    /**
-     * Returns the first PropertyDirection property from the provided state, if any.
-     * @return the first PropertyDirection, or empty() if there are no such properties
-     */
-    @SuppressWarnings("unchecked")
-    @ApiStatus.Experimental
-    public static Optional<EnumProperty<Direction>> PRW_getFirstDirectionProperty(BlockState state)
-    {
-        for (Property<?> prop : state.getProperties())
-        {
-            if (prop instanceof EnumProperty<?> ep && ep.getType().equals(Direction.class))
-            {
-                return Optional.of((EnumProperty<Direction>) ep);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    @ApiStatus.Experimental
-    public static boolean PRW_isFluidBlock(BlockState state)
-    {
-        if (state.getFluidState().equals(Fluids.EMPTY.getDefaultState()))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @ApiStatus.Experimental
-    public static boolean PRW_isFluidSourceBlock(BlockState state)
-    {
-        return state.getBlock() instanceof FluidBlock && state.getFluidState().getLevel() == 8;
-    }
-
     /**
      * Returns the first PropertyDirection property from the provided state, if any.
      *

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 
 import net.minecraft.block.entity.BeehiveBlockEntity;
@@ -30,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.event.Vibrations;
 
 import fi.dy.masa.malilib.util.Constants;
+import fi.dy.masa.malilib.util.NBTUtils;
 
 public class NbtBlockUtils
 {
@@ -41,9 +43,14 @@ public class NbtBlockUtils
      */
     public static @Nullable BlockEntityType<?> getBlockEntityTypeFromNbt(@Nonnull NbtCompound nbt)
     {
-        if (nbt.contains(NbtKeys.ID, Constants.NBT.TAG_STRING))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.ID, Constants.NBT.TAG_STRING))
         {
-            return Registries.BLOCK_ENTITY_TYPE.getOptionalValue(Identifier.tryParse(nbt.getString(NbtKeys.ID))).orElse(null);
+            RegistryEntry<BlockEntityType<?>> entry = Registries.BLOCK_ENTITY_TYPE.getEntry(Identifier.tryParse(nbt.getString(fi.dy.masa.malilib.util.NbtKeys.ID))).orElse(null);
+
+            if (entry != null && entry.hasKeyAndValue())
+            {
+                return entry.value();
+            }
         }
 
         return null;
@@ -87,9 +94,9 @@ public class NbtBlockUtils
     {
         Set<Integer> list = new HashSet<>();
 
-        if (nbt.contains(NbtKeys.DISABLED_SLOTS, Constants.NBT.TAG_INT_ARRAY))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.DISABLED_SLOTS, Constants.NBT.TAG_INT_ARRAY))
         {
-            int[] is = nbt.getIntArray(NbtKeys.DISABLED_SLOTS);
+            int[] is = nbt.getIntArray(fi.dy.masa.malilib.util.NbtKeys.DISABLED_SLOTS);
 
             for (int j : is)
             {
@@ -111,17 +118,17 @@ public class NbtBlockUtils
         RegistryEntry<StatusEffect> primary = null;
         RegistryEntry<StatusEffect> secondary = null;
 
-        if (nbt.contains(NbtKeys.PRIMARY_EFFECT, Constants.NBT.TAG_STRING))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.PRIMARY_EFFECT, Constants.NBT.TAG_STRING))
         {
-            Identifier id = Identifier.tryParse(nbt.getString(NbtKeys.PRIMARY_EFFECT));
+            Identifier id = Identifier.tryParse(nbt.getString(fi.dy.masa.malilib.util.NbtKeys.PRIMARY_EFFECT));
             if (id != null)
             {
                 primary = Registries.STATUS_EFFECT.getEntry(id).orElse(null);
             }
         }
-        if (nbt.contains(NbtKeys.SECONDARY_EFFECT, Constants.NBT.TAG_STRING))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.SECONDARY_EFFECT, Constants.NBT.TAG_STRING))
         {
-            Identifier id = Identifier.tryParse(nbt.getString(NbtKeys.SECONDARY_EFFECT));
+            Identifier id = Identifier.tryParse(nbt.getString(fi.dy.masa.malilib.util.NbtKeys.SECONDARY_EFFECT));
             if (id != null)
             {
                 secondary = Registries.STATUS_EFFECT.getEntry(id).orElse(null);
@@ -141,13 +148,13 @@ public class NbtBlockUtils
         List<BeehiveBlockEntity.BeeData> bees = new ArrayList<>();
         BlockPos flower = BlockPos.ORIGIN;
 
-        if (nbt.contains(NbtKeys.FLOWER))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.FLOWER))
         {
-            flower = NbtUtils.readBlockPosFromIntArray(nbt, NbtKeys.FLOWER);
+            flower = NBTUtils.readBlockPosFromIntArray(nbt, fi.dy.masa.malilib.util.NbtKeys.FLOWER);
         }
-        if (nbt.contains(NbtKeys.BEES, Constants.NBT.TAG_LIST))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.BEES, Constants.NBT.TAG_LIST))
         {
-            BeehiveBlockEntity.BeeData.LIST_CODEC.parse(NbtOps.INSTANCE, nbt.get(NbtKeys.BEES)).resultOrPartial().ifPresent(bees::addAll);
+            BeehiveBlockEntity.BeeData.LIST_CODEC.parse(NbtOps.INSTANCE, nbt.get(fi.dy.masa.malilib.util.NbtKeys.BEES)).resultOrPartial().ifPresent(bees::addAll);
         }
 
         return Pair.of(bees, flower);
@@ -165,13 +172,13 @@ public class NbtBlockUtils
         AtomicReference<Vibrations.ListenerData> data = new AtomicReference<>(null);
         int lastFreq = -1;
 
-        if (nbt.contains(NbtKeys.VIBRATION, Constants.NBT.TAG_INT))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.VIBRATION, Constants.NBT.TAG_INT))
         {
-            lastFreq = nbt.getInt(NbtKeys.VIBRATION);
+            lastFreq = nbt.getInt(fi.dy.masa.malilib.util.NbtKeys.VIBRATION);
         }
-        if (nbt.contains(NbtKeys.LISTENER, Constants.NBT.TAG_COMPOUND))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.LISTENER, Constants.NBT.TAG_COMPOUND))
         {
-            Vibrations.ListenerData.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(NbtKeys.LISTENER)).resultOrPartial().ifPresent(data::set);
+            Vibrations.ListenerData.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(fi.dy.masa.malilib.util.NbtKeys.LISTENER)).resultOrPartial().ifPresent(data::set);
         }
 
         return Pair.of(lastFreq, data.get());
@@ -187,13 +194,13 @@ public class NbtBlockUtils
         long age = -1;
         BlockPos pos = BlockPos.ORIGIN;
 
-        if (nbt.contains(NbtKeys.AGE, Constants.NBT.TAG_LONG))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.AGE, Constants.NBT.TAG_LONG))
         {
-            age = nbt.getLong(NbtKeys.AGE);
+            age = nbt.getLong(fi.dy.masa.malilib.util.NbtKeys.AGE);
         }
-        if (nbt.contains(NbtKeys.EXIT, Constants.NBT.TAG_INT_ARRAY))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.EXIT, Constants.NBT.TAG_INT_ARRAY))
         {
-            pos = NbtUtils.readBlockPosFromIntArray(nbt, NbtKeys.EXIT);
+            pos = NBTUtils.readBlockPosFromIntArray(nbt, fi.dy.masa.malilib.util.NbtKeys.EXIT);
         }
 
         return Pair.of(age, pos);
@@ -212,17 +219,17 @@ public class NbtBlockUtils
         AtomicReference<SignText> back = new AtomicReference<>(null);
         boolean waxed = false;
 
-        if (nbt.contains(NbtKeys.FRONT_TEXT))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.FRONT_TEXT))
         {
-            SignText.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(NbtKeys.FRONT_TEXT)).resultOrPartial().ifPresent(front::set);
+            SignText.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(fi.dy.masa.malilib.util.NbtKeys.FRONT_TEXT)).resultOrPartial().ifPresent(front::set);
         }
-        if (nbt.contains(NbtKeys.BACK_TEXT))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.BACK_TEXT))
         {
-            SignText.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(NbtKeys.BACK_TEXT)).resultOrPartial().ifPresent(back::set);
+            SignText.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt.getCompound(fi.dy.masa.malilib.util.NbtKeys.BACK_TEXT)).resultOrPartial().ifPresent(back::set);
         }
-        if (nbt.contains(NbtKeys.WAXED))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.WAXED))
         {
-            waxed = nbt.getBoolean(NbtKeys.WAXED);
+            waxed = nbt.getBoolean(fi.dy.masa.malilib.util.NbtKeys.WAXED);
         }
 
         return Pair.of(Pair.of(front.get(), back.get()), waxed);
@@ -240,13 +247,13 @@ public class NbtBlockUtils
         ItemStack book = ItemStack.EMPTY;
         int current = -1;
 
-        if (nbt.contains(NbtKeys.BOOK, Constants.NBT.TAG_COMPOUND))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.BOOK, Constants.NBT.TAG_COMPOUND))
         {
-            book = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.BOOK));
+            book = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(fi.dy.masa.malilib.util.NbtKeys.BOOK));
         }
-        if (nbt.contains(NbtKeys.PAGE, Constants.NBT.TAG_INT))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.PAGE, Constants.NBT.TAG_INT))
         {
-            current = nbt.getInt(NbtKeys.PAGE);
+            current = nbt.getInt(fi.dy.masa.malilib.util.NbtKeys.PAGE);
         }
 
         return Pair.of(book, current);
@@ -265,13 +272,13 @@ public class NbtBlockUtils
         Identifier note = null;
         Text name = Text.empty();
 
-        if (nbt.contains(NbtKeys.NOTE, Constants.NBT.TAG_STRING))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.NOTE, Constants.NBT.TAG_STRING))
         {
-            note = Identifier.tryParse(nbt.getString(NbtKeys.NOTE));
+            note = Identifier.tryParse(nbt.getString(fi.dy.masa.malilib.util.NbtKeys.NOTE));
         }
-        if (nbt.contains(NbtKeys.SKULL_NAME, Constants.NBT.TAG_STRING))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.SKULL_NAME, Constants.NBT.TAG_STRING))
         {
-            String str = nbt.getString(NbtKeys.SKULL_NAME);
+            String str = nbt.getString(fi.dy.masa.malilib.util.NbtKeys.SKULL_NAME);
 
             try
             {
@@ -279,9 +286,9 @@ public class NbtBlockUtils
             }
             catch (Exception ignored) {}
         }
-        if (nbt.contains(NbtKeys.PROFILE))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.PROFILE))
         {
-            ProfileComponent.CODEC.parse(NbtOps.INSTANCE, nbt.get(NbtKeys.PROFILE)).resultOrPartial().ifPresent(profile::set);
+            ProfileComponent.CODEC.parse(NbtOps.INSTANCE, nbt.get(fi.dy.masa.malilib.util.NbtKeys.PROFILE)).resultOrPartial().ifPresent(profile::set);
         }
 
         return Pair.of(profile.get(), Pair.of(note, name));
@@ -293,17 +300,17 @@ public class NbtBlockUtils
      * @param nbt
      * @return
      */
-    public static Reference2IntOpenHashMap<RegistryKey<Recipe<?>>> getRecipesUsedFromNbt(@Nonnull NbtCompound nbt)
+    public static Object2IntOpenHashMap<Identifier> getRecipesUsedFromNbt(@Nonnull NbtCompound nbt)
     {
-        Reference2IntOpenHashMap<RegistryKey<Recipe<?>>> list = new Reference2IntOpenHashMap<>();
+        Object2IntOpenHashMap<Identifier> list = new Object2IntOpenHashMap<>();
 
-        if (nbt.contains(NbtKeys.RECIPES_USED, Constants.NBT.TAG_COMPOUND))
+        if (nbt.contains(fi.dy.masa.malilib.util.NbtKeys.RECIPES_USED, Constants.NBT.TAG_COMPOUND))
         {
-            NbtCompound compound = nbt.getCompound(NbtKeys.RECIPES_USED);
+            NbtCompound compound = nbt.getCompound(fi.dy.masa.malilib.util.NbtKeys.RECIPES_USED);
 
             for (String key : compound.getKeys())
             {
-                list.put(RegistryKey.of(RegistryKeys.RECIPE, Identifier.of(key)), compound.getInt(key));
+                list.put(Identifier.of(key), compound.getInt(key));
             }
         }
 

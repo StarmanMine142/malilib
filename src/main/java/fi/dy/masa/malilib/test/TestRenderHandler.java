@@ -36,6 +36,7 @@ import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 
 public class TestRenderHandler implements IRenderer
 {
@@ -429,7 +430,7 @@ public class TestRenderHandler implements IRenderer
                 }
                 else if (context.nbt() != null)
                 {
-                    lockedSlots = BlockUtils.getDisabledSlotsFromNbt(context.nbt());
+                    lockedSlots = NbtBlockUtils.getDisabledSlotsFromNbt(context.nbt());
                 }
             }
 

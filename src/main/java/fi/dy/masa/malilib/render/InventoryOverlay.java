@@ -49,6 +49,8 @@ import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 
 public class InventoryOverlay
 {
@@ -519,7 +521,7 @@ public class InventoryOverlay
      */
     public static InventoryRenderType getInventoryType(@Nonnull NbtCompound nbt)
     {
-        BlockEntityType<?> blockType = BlockUtils.getBlockEntityTypeFromNbt(nbt);
+        BlockEntityType<?> blockType = NbtBlockUtils.getBlockEntityTypeFromNbt(nbt);
 
         if (blockType != null)
         {
@@ -579,7 +581,7 @@ public class InventoryOverlay
             }
         }
 
-        EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+        EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
         if (entityType != null)
         {

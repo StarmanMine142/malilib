@@ -28,13 +28,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerRecipeBook;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -60,7 +58,12 @@ public class NbtEntityUtils
     {
         if (nbt.contains(NbtKeys.ID, Constants.NBT.TAG_STRING))
         {
-            return Registries.ENTITY_TYPE.getOptionalValue(Identifier.tryParse(nbt.getString(NbtKeys.ID))).orElse(null);
+            RegistryEntry<EntityType<?>> entry = Registries.ENTITY_TYPE.getEntry(Identifier.tryParse(nbt.getString(NbtKeys.ID))).orElse(null);
+
+            if (entry != null && entry.hasKeyAndValue())
+            {
+                return entry.value();
+            }
         }
 
         return null;
@@ -161,7 +164,7 @@ public class NbtEntityUtils
             health = nbt.getFloat(NbtKeys.HEALTH);
         }
 
-        maxHealth = getAttributeValueFromNbt(nbt, EntityAttributes.MAX_HEALTH);
+        maxHealth = getAttributeValueFromNbt(nbt, EntityAttributes.GENERIC_MAX_HEALTH);
 
         if (maxHealth < 0)
         {
@@ -185,8 +188,8 @@ public class NbtEntityUtils
 
         if (container != null)
         {
-            moveSpeed = container.getValue(EntityAttributes.MOVEMENT_SPEED);
-            jumpStrength = container.getValue(EntityAttributes.JUMP_STRENGTH);
+            moveSpeed = container.getValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+            jumpStrength = container.getValue(EntityAttributes.GENERIC_JUMP_STRENGTH);
         }
 
         return Pair.of(moveSpeed, jumpStrength);
@@ -517,7 +520,7 @@ public class NbtEntityUtils
     {
         try
         {
-            return registry.getOrThrow(Registries.ENTITY_TYPE.getKey()).getEntry(id).orElseThrow();
+            return registry.getOptional(Registries.ENTITY_TYPE.getKey()).flatMap(optional -> optional.getEntry(id)).orElse(null);
         }
         catch (Exception e)
         {
@@ -725,6 +728,12 @@ public class NbtEntityUtils
         return null;
     }
 
+    /**
+     * Get a Tropical Fish Variant from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static @Nullable TropicalFishEntity.Variety getFishVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.VARIANT_2, Constants.NBT.TAG_INT))
@@ -875,6 +884,8 @@ public class NbtEntityUtils
      * @param manager ()
      * @return ()
      */
+    // TODO 1.21.2+
+    /*
     public static @Nullable ServerRecipeBook getPlayerRecipeBookFromNbt(@Nonnull NbtCompound nbt, @Nonnull ServerRecipeManager manager)
     {
         ServerRecipeBook book = null;
@@ -887,4 +898,5 @@ public class NbtEntityUtils
 
         return book;
     }
+     */
 }

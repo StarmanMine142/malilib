@@ -254,6 +254,10 @@ public class BlockUtils
                         key = val.equals(Boolean.TRUE) ? "malilib.label.block_state_properties.boolean.true" :
                               "malilib.label.block_state_properties.boolean.false";
                     }
+                    else if (prop instanceof DirectionProperty)
+                    {
+                        key = "malilib.label.block_state_properties.direction";
+                    }
                     else if (prop instanceof EnumProperty<?> enumProperty)
                     {
                         if (enumProperty.getType().equals(Direction.class))
